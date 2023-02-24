@@ -7,13 +7,36 @@ import {
   getTodos,
   updateTodo
 } from './../../store/slices/todoListSlice'
-function TodoList ({ todos, isFetching, error, get, remove, update }) {
+function TodoList ({
+  todos,
+  isFetching,
+  error,
+  get,
+  remove,
+  update,
+  setTodos,
+  setEditTodo
+}) {
   useEffect(() => {
     get()
   }, [])
 
   const isBoughtChangeHandler = (id, checked) => {
     update(id, { isBought: checked })
+  }
+  const handleComplete = todo =>
+    setTodos(
+      todos.map(item => {
+        if (item.id === todo.id) {
+          return { ...item, completed: !item.completed }
+        }
+        return item
+      })
+    )
+
+  const handleEdit = ({ id }) => {
+    const findTodo = todos.find(todo => todo.id === id)
+    setEditTodo(findTodo)
   }
   return (
     <ul>
@@ -34,17 +57,13 @@ function TodoList ({ todos, isFetching, error, get, remove, update }) {
             <div>
               <button
                 className='button-complete task-button'
-                onClick={() => {
-                  remove(t.id)
-                }}
+                onClick={() => handleComplete(t.id)}
               >
                 <FaChevronCircleDown />
               </button>
               <button
                 className='button-edit task-button'
-                onClick={() => {
-                  remove(t.id)
-                }}
+                onClick={() => handleEdit(t.id)}
               >
                 <FaPencilAlt />
               </button>
